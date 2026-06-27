@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peak Pilates 綜合練習測驗（中英對照）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4F1EB;--paper-2:#FBF9F5;--ink:#2B2E2C;--ink-soft:#6A6F69;
+    --sage:#728A6F;--sage-deep:#4F6450;--clay:#C0795A;--line:#E2DDD2;
+    --good:#3F7A52;--good-bg:#E6F0E8;--bad:#B5503F;--bad-bg:#F6E5E0;--radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:"Noto Sans TC",system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;padding:0 0 80px}
+  .wrap{max-width:680px;margin:0 auto;padding:0 18px}
+
+  header{padding:34px 18px 26px;border-bottom:1px solid var(--line);
+    background:radial-gradient(120% 80% at 100% 0%, rgba(114,138,111,.10), transparent 60%),var(--paper)}
+  .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--sage-deep);font-weight:700;margin-bottom:10px}
+  h1{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(28px,7vw,40px);line-height:1.1;letter-spacing:-.01em}
+  h1 em{font-style:italic;color:var(--clay)}
+  .sub{color:var(--ink-soft);margin-top:10px;font-size:15px}
+
+  .controls{display:flex;flex-wrap:wrap;gap:14px 18px;padding:16px 18px 2px;font-size:13px;color:var(--ink-soft)}
+  .controls label{display:flex;align-items:center;gap:8px;cursor:pointer}
+  .controls input{width:16px;height:16px;accent-color:var(--sage-deep)}
+
+  .bar{position:sticky;top:0;z-index:5;background:rgba(244,241,235,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);padding:12px 18px;display:flex;align-items:center;gap:14px}
+  .progress{flex:1;height:6px;background:var(--line);border-radius:999px;overflow:hidden}
+  .progress > i{display:block;height:100%;width:0;background:var(--sage);transition:width .3s ease}
+  .score{font-size:13px;color:var(--ink-soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+  .q{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius);padding:20px 18px;margin-top:16px}
+  .qnum{font-family:"Fraunces",serif;font-size:13px;color:var(--clay);font-weight:600;letter-spacing:.04em;
+    margin-bottom:6px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .qsrc{font-family:"Noto Sans TC",sans-serif;font-size:11px;color:var(--ink-soft);font-weight:500;
+    border:1px solid var(--line);border-radius:999px;padding:2px 9px;white-space:nowrap}
+  .qtext{font-size:16px;font-weight:500;margin-bottom:3px}
+  .qtext-zh{font-size:14px;color:var(--sage-deep);margin-bottom:14px}
+  .opt{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--line);background:#fff;border-radius:11px;
+    padding:11px 13px;margin-bottom:9px;cursor:pointer;transition:border-color .15s ease,background .15s ease}
+  .opt:hover{border-color:var(--sage)}
+  .opt .key{flex:0 0 22px;height:22px;border-radius:50%;border:1.5px solid var(--ink-soft);color:var(--ink-soft);
+    font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .opt .label{flex:1;font-size:14px}
+  .opt .label .zh{display:block;color:var(--ink-soft);font-size:12.5px;margin-top:1px}
+  .opt.sel{border-color:var(--sage-deep)}
+  .opt.sel .key{background:var(--sage-deep);border-color:var(--sage-deep);color:#fff}
+  .answered .opt{cursor:default;pointer-events:none}
+  .opt.correct{border-color:var(--good);background:var(--good-bg)}
+  .opt.correct .key{background:var(--good);border-color:var(--good);color:#fff}
+  .opt.correct .label .zh{color:var(--good)}
+  .opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+  .opt.wrong .key{background:var(--bad);border-color:var(--bad);color:#fff}
+  .opt.wrong .label .zh{color:var(--bad)}
+
+  .explain{margin-top:6px;border-left:3px solid var(--sage);background:#fff;border-radius:0 10px 10px 0;
+    padding:11px 14px;font-size:13.5px;color:var(--ink);display:none}
+  .answered .explain{display:block}
+  .explain .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:999px;margin-bottom:6px}
+  .tag.ok{background:var(--good-bg);color:var(--good)}
+  .tag.no{background:var(--bad-bg);color:var(--bad)}
+  .prev{font-size:12px;color:var(--ink-soft);margin-top:7px}
+  .prev b{color:var(--bad)}
+
+  .result{background:var(--sage-deep);color:#fff;border-radius:var(--radius);padding:22px 20px;margin-top:20px;display:none}
+  .result.show{display:block}
+  .result h2{font-family:"Fraunces",serif;font-weight:500;font-size:24px;margin-bottom:4px}
+  .result p{opacity:.9;font-size:14px}
+  .result .big{font-family:"Fraunces",serif;font-size:46px;line-height:1;margin:8px 0}
+
+  .actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+  .btn{font-family:inherit;font-size:14px;font-weight:500;border-radius:999px;padding:12px 22px;cursor:pointer;
+    border:1px solid var(--sage-deep);background:var(--sage-deep);color:#fff;transition:opacity .15s ease}
+  .btn:hover{opacity:.88}
+  .btn.ghost{background:transparent;color:var(--sage-deep)}
+  footer{text-align:center;color:var(--ink-soft);font-size:12px;padding:30px 18px 0}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="eyebrow">Peak Pilates · Classical Level I Mat</div>
+    <h1>綜合<em>練習</em>測驗</h1>
+    <p class="sub">四份測驗全部混合、隨機出題，共 <span id="totalCount">0</span> 題，中英對照、附解析。</p>
+  </div>
+</header>
+
+<div class="controls">
+  <label><input type="checkbox" id="shuffleOpt" checked> 打散選項順序</label>
+</div>
+
+<div class="bar">
+  <div class="progress"><i id="prog"></i></div>
+  <div class="score" id="score">0 / 0</div>
+</div>
+
+<main class="wrap" id="quiz"></main>
+
+<div class="wrap">
+  <div class="result" id="result">
+    <h2 id="rTitle">完成！</h2>
+    <div class="big" id="rScore">0 / 0</div>
+    <p id="rMsg"></p>
+  </div>
+  <div class="actions">
+    <button class="btn" id="retry">重新打亂一份</button>
+    <button class="btn ghost" id="showAll">直接看全部正解</button>
+  </div>
+</div>
+
+<footer class="wrap">依據專案教材整理 · 僅供個人練習複習</footer>
+
+<script>
+/* q/o = 英文 ; qz/oz = 中文 ; correct=正解索引 ; picked=你截圖原選 */
+const RAW=[
+  {src:"Quiz 2",
+   q:"Lifting the abs in and up, scooping, helps to promote axial ____.",
+   qz:"將腹部向內、向上提（內收上提 scoop），有助於促進軸向＿＿＿。",
+   o:["compression","elongation","differentiation","traction"],
+   oz:["壓縮","拉長","分化","牽引"],correct:1,picked:1,
+   ex:"內收上提讓脊椎軸向「拉長 elongation」、在椎體間創造空間。"},
+  {src:"Quiz 2",
+   q:"A student bends forward to touch his toes. He is performing:",
+   qz:"學員向前彎腰去摸腳趾，他正在做的是：",
+   o:["Lateral Spinal Flexion","Spinal Extension","Spinal Flexion","Axial Elongation"],
+   oz:["脊椎側屈","脊椎伸展","脊椎屈曲","軸向延伸"],correct:2,picked:3,
+   ex:"向前彎腰＝脊椎「屈曲 Spinal Flexion」；Axial Elongation 是往上拉長，不是前彎。"},
+  {src:"Quiz 2",
+   q:"The core is the same as the Powerhouse.",
+   qz:"核心（core）等同於核心動力區（Powerhouse）。",
+   o:["True","False"],oz:["是","否"],correct:1,picked:1,
+   ex:"教材寫 Powerhouse「相似但不相同」於 core／inner unit，故為「否」。"},
+  {src:"Quiz 2",
+   q:"The parts of the spine in order from inferior to superior are: Cervical, Thoracic, Lumbar, Sacrum, Coccyx.",
+   qz:"脊椎由下到上的順序為：頸椎、胸椎、腰椎、薦骨、尾骨。",
+   o:["True","False"],oz:["是","否"],correct:1,picked:1,
+   ex:"由下到上應是 尾骨→薦骨→腰椎→胸椎→頸椎，題目順序剛好相反，故為「否」。"},
+  {src:"Quiz 2",
+   q:"Muscles can be categorized by function. Some classifications use the terms \"mobilizers and stabilizers\" to describe function.",
+   qz:"肌肉可依功能分類，有些分類以「動作肌與穩定肌」來描述其功能。",
+   o:["True","False"],oz:["是","否"],correct:0,picked:0,
+   ex:"肌肉可分為動作肌（mobilizers）與穩定肌（stabilizers），為「是」。"},
+
+  {src:"Quiz 3",
+   q:"The transition from Side Kick Series: Inner Thigh Lifts & Circles into Teaser 1 Leg is:",
+   qz:"從「側踢系列：內側大腿上抬與繞圈」轉換進入「Teaser 單腿」的動作是：",
+   o:["Beats on Belly","Bring top leg around. Hands to mat. Sit to top of mat with legs together. 1 knee extends.","Roll on to Back 1 leg bent 1 leg straight","Rock to side. Bring legs forward to seated and extend 1 knee."],
+   oz:["腹部拍擊","上方腿繞過來，雙手撐墊，坐到墊子前端、雙腿併攏，一膝伸直","翻向仰躺，一腿屈、一腿直","搖向側邊，雙腿前帶成坐姿並伸直一膝"],correct:1,picked:0,
+   ex:"轉換表「繼續進入 Teaser」：上方腿繞過、坐到墊子前端、一膝伸直＝Teaser 單腿起始坐姿。Beats on Belly（腹部拍擊）是『換邊』用的俯臥轉換，不是進 Teaser 的動作。"},
+  {src:"Quiz 3",
+   q:"Which of the following are TRUE about the exercise The Push Up series?",
+   qz:"關於「伏地挺身系列 Push Up series」，下列何者為真？",
+   o:["Roll down and walk hands forward with 3 steps into the push up setup position","Hips lift up in a downward dog or pike position as hands walk to feet","Eyes stay into abs as hands begin the walks out and begin the return back in","A & C"],
+   oz:["捲下後雙手向前走 3 步進入伏地挺身預備位","雙手走向腳時髖部上抬成下犬／屈體","雙手往外走與往回走時，目光保持看向腹部","A 與 C"],correct:3,picked:3,
+   ex:"捲下走 3 步進入伏地挺身位（A）、目光看腹部（C）皆正確，選 A 與 C。"},
+  {src:"Quiz 3",
+   q:"Select the Mat exercises that have a primary goal of articulating the spine:",
+   qz:"選出主要目標為「脊椎逐節分節活動」的墊上動作：",
+   o:["Roll Up, Spine Stretch Forward, Teaser One Leg","Rollup, Double Leg Stretch, Spine Stretch Forward","Roll Up, Double Leg Stretch, Rolling Like a Ball","None of the above"],
+   oz:["捲體向上、脊椎前伸、Teaser 單腿","捲體向上、雙腿伸展、脊椎前伸","捲體向上、雙腿伸展、球式滾動","以上皆非"],correct:0,picked:0,
+   ex:"捲體向上、脊椎前伸、Teaser 單腿，三者主要目標都是脊椎逐節分節活動。"},
+  {src:"Quiz 3",
+   q:"You see a student whose legs keep coming apart in the Hundred, the Roll Up, and other exercises. Reminding them to work with this key concept will help.",
+   qz:"學員在百式、捲體向上等動作中雙腿一直分開。提醒他注意哪個關鍵概念會有幫助？",
+   o:["Length and opposition","Box","Centerline","Scoop"],
+   oz:["延長與對抗","身體框（Box）","中線（Centerline）","內收上提（Scoop）"],correct:2,picked:2,
+   ex:"雙腿一直分開＝中線（Centerline）沒守住，提醒夾向中線。"},
+  {src:"Quiz 3",
+   q:"The primary goal of the Abdominal Series is to",
+   qz:"腹部系列的主要目標是：",
+   o:["Improves vertebral spacing and posture","Promotes learning to use the arms by initiating through the Powerhouse","Develop the stamina and strength of the abdominals and other Powerhouse muscles","All of the above"],
+   oz:["改善椎間距與姿勢","促進學習用核心動力區帶動手臂","建立腹部與其他核心動力區肌群的耐力與力量","以上皆是"],correct:2,picked:2,
+   ex:"腹部系列主要在建立腹部與核心動力區的力量與耐力。"},
+  {src:"Quiz 3",
+   q:"A student has trouble engaging their seat properly in the Saw. You might assist them by:",
+   qz:"學員在鋸子式（Saw）難以正確啟動臀部，你可以如何協助？",
+   o:["Asking them to keep their knees bent more","Asking them to 'perch'","Cue to point their toes more strongly","Cue them to lean back more"],
+   oz:["請他膝蓋彎多一點","請他「perch」（坐到坐骨前緣略前傾）","提示他更用力繃腳尖","提示他更向後傾"],correct:1,picked:1,
+   ex:"請學員 perch（坐到坐骨前緣、略前傾），有助啟動臀部。"},
+  {src:"Quiz 3",
+   q:"A building block for Shoulder Bridge Prep is",
+   qz:"肩橋預備（Shoulder Bridge Prep）的建構基礎是：",
+   o:["Move feet farther away from body","Bring feet mat width distance apart","Take legs and feet sitz bones distance apart","Turn out more at the hips"],
+   oz:["雙腳移得離身體更遠","雙腳打開與墊同寬","雙腿與雙腳打開至坐骨同寬","髖部更外旋"],correct:2,picked:2,
+   ex:"雙腳與坐骨同寬、平行，是肩橋預備的建構基礎。"},
+  {src:"Quiz 3",
+   q:"Teaser 1 Leg is more challenging when the bent knee foot is placed further away from the body on the mat.",
+   qz:"在 Teaser 單腿中，屈膝那隻腳在墊上放得離身體越遠，難度越高。",
+   o:["True","False"],oz:["是","否"],correct:0,picked:0,
+   ex:"屈膝腳放得越遠、槓桿越長、支撐越不穩，難度提高，為「是」。"},
+  {src:"Quiz 3",
+   q:"Which is the correct order for the Abdominal Series?",
+   qz:"腹部系列的正確順序為何？",
+   o:["Single Leg Stretch, Single Straight Leg Stretch, Double Straight Leg Lower Lifts, Double Leg Stretch, Criss Cross","Single Leg Stretch, Double Leg Stretch, Single Straight Leg Stretch, Double Straight Leg Lower Lifts, Criss Cross","Criss Cross, Double Straight Leg Lower Lifts, Single Straight Leg Stretch, Double Leg Stretch, Single Leg Stretch","Single Straight Leg Stretch, Double Leg Stretch, Single Leg Stretch, Double Leg Straight Lower Lifts, Criss Cross"],
+   oz:["單腿伸展、單直腿伸展、雙直腿下放上抬、雙腿伸展、交叉","單腿伸展、雙腿伸展、單直腿伸展、雙直腿下放上抬、交叉","交叉、雙直腿下放上抬、單直腿伸展、雙腿伸展、單腿伸展","單直腿伸展、雙腿伸展、單腿伸展、雙直腿下放上抬、交叉"],correct:1,picked:1,
+   ex:"順序：單腿→雙腿→單直腿→雙直腿下放上抬→交叉。"},
+  {src:"Quiz 3",
+   q:"The rhythm of Single Leg Kick is",
+   qz:"單腿踢（Single Leg Kick）的節奏是：",
+   o:["Kick Kick switch, Kick Kick switch...","Smooth and even","Kick and Kick and Kick and Kick....","Kick Kick Kick, switch, Kick Kick Kick switch"],
+   oz:["踢、踢，換；踢、踢，換……","平順且均勻","踢—踢—踢—踢……","踢踢踢、換，踢踢踢、換"],correct:0,picked:0,
+   ex:"單腿踢節奏為「踢、踢，換」連續進行。"},
+
+  {src:"Quiz 5",
+   q:"The Add-In exercises are used to",
+   qz:"加入動作（Add-In）的用途是：",
+   o:["Teach a movement concept","Break up the flow","Keep to the order of the traditional Pilates exercises","Replace Fundamentals"],
+   oz:["教導某個動作概念","打斷流暢度","維持傳統皮拉提斯動作的順序","取代基本功"],correct:0,picked:0,
+   ex:"Add-In 用來教導某個動作概念，是補充而非取代基本功。"},
+  {src:"Quiz 5",
+   q:"A good place to add Side Forearm Plank in a mat workout is",
+   qz:"在墊上課程中加入「側前臂棒式」的好時機是：",
+   o:["Before or after Side Kick Series","Before Swimming prep","In place of Mermaid Stretch","At the end of the workout"],
+   oz:["側踢系列之前或之後","游泳預備之前","取代美人魚伸展","課程結束時"],correct:0,picked:0,
+   ex:"建議擺位：側踢系列之後、Beats 之前（即側踢系列前後）。"},
+  {src:"Quiz 5",
+   q:"A good building block for the Add-In footwork is",
+   qz:"加入動作「腳部動作（footwork）」的良好建構基礎是：",
+   o:["Reducing reps","Separating legs sitz bones distance apart","Place hands beneath pelvis","A and C"],
+   oz:["減少次數","雙腿分開至坐骨同寬","雙手置於骨盆下方","A 與 C"],correct:3,picked:3,
+   ex:"（影片教材內容）以 A 與 C 作為建構基礎。"},
+  {src:"Quiz 5",
+   q:"What is the correct setup for the Add-In \"clams\"?",
+   qz:"加入動作「貝殼式（clams）」的正確預備為何？",
+   o:["Same set up as Side Kick Series","Same set up as Side Kick Series with knees bent at 90 degrees","Same set up as Side Kick Series with knees bent at 45 degrees","None of the above"],
+   oz:["與側踢系列相同的預備","與側踢系列相同，但膝蓋彎曲 90 度","與側踢系列相同，但膝蓋彎曲 45 度","以上皆非"],correct:1,picked:1,
+   ex:"與側踢系列同設定，但膝蓋彎曲 90 度。"},
+  {src:"Quiz 5",
+   q:"Option 2 for Cat Cow pose is to move into greater lumbar flexion and",
+   qz:"貓牛式（Cat Cow）的選項 2 是進入更多腰椎屈曲，並且：",
+   o:["Less thoracic flexion","More thoracic extension","More thoracic flexion","Both A and B"],
+   oz:["更少胸椎屈曲","更多胸椎伸展","更多胸椎屈曲","A 與 B 皆是"],correct:3,picked:3,
+   ex:"（影片教材內容）更多腰椎屈曲，並 A 與 B 兼具。"},
+  {src:"Quiz 5",
+   q:"Common errors for the Add-In exercise Straddle Stretch are",
+   qz:"加入動作「開腿伸展（Straddle Stretch）」的常見錯誤是：",
+   o:["Rounding the spine","Allowing the opposite hip to lift when stretching to the side","Allowing the feet and knees to roll in","All of the above"],
+   oz:["駝背、脊椎拱圓","向側邊伸展時讓對側髖部抬起","讓雙腳與膝蓋向內倒","以上皆是"],correct:3,picked:3,
+   ex:"駝背、對側髖上抬、足膝內倒都是常見錯誤，選以上皆是。"},
+  {src:"Quiz 5",
+   q:"The Add-In \"Hip Lifts\" build strength in the",
+   qz:"加入動作「髖部上抬（Hip Lifts）」主要強化哪裡？",
+   o:["Outer thighs","Quadriceps","Gluteals","Calves"],
+   oz:["大腿外側","股四頭肌","臀部肌群","小腿肌"],correct:2,picked:2,
+   ex:"Hip Lifts（橋式類）主要強化臀部肌群 Gluteals。"},
+  {src:"Quiz 5",
+   q:"What Add-In exercise is a progression to The Level 2 version of Swimming?",
+   qz:"哪個加入動作是「游泳 Level 2 版本」的進階？",
+   o:["Swimming Prep","Flutter Kicks","Beats on Belly","Side Lying Hip Abduction"],
+   oz:["游泳預備","拍打踢（Flutter Kicks）","腹部拍擊","側躺髖外展"],correct:1,picked:1,
+   ex:"清單列「Swimming Flutter Kicks，接在游泳預備之後」，為游泳的進階。"},
+  {src:"Quiz 5",
+   q:"A good exercise to add after Spine Stretch Forward or Saw is the Add-In",
+   qz:"在脊椎前伸或鋸子式之後，適合加入的動作是：",
+   o:["Side Plank","Hip Lift","Lateral Bend","Cat Cow"],
+   oz:["側棒式","髖部上抬","側彎（Lateral Bend）","貓牛式"],correct:2,picked:2,
+   ex:"（影片教材內容）坐姿前彎類動作後可接 Lateral Bend 側彎。"},
+  {src:"Quiz 5",
+   q:"An important Add-In exercise for active agers is the",
+   qz:"對活躍熟齡族很重要的加入動作是：",
+   o:["Footwork Series: Heels","Hip Lifts","Flutter Kicks","Side Lying Hip Abduction"],
+   oz:["腳部系列：腳跟","髖部上抬","拍打踢","側躺髖外展"],correct:3,picked:3,
+   ex:"對活躍熟齡族，側躺髖外展（強化髖部、平衡）很重要。"},
+
+  {src:"Quiz 6",
+   q:"When cueing the breath",
+   qz:"提示呼吸時應該：",
+   o:["Emphasize the exhalation","Inhale through the nose and exhale through the mouth","Teach the inhale on breathing exercises only","Cue to inhale and exhale each exercise"],
+   oz:["強調吐氣","鼻吸口吐","只在呼吸練習時教吸氣","每個動作都提示吸與吐"],correct:0,picked:0,
+   ex:"Joseph Pilates：吐氣是關鍵，cue 呼吸時強調吐氣。"},
+  {src:"Quiz 6",
+   q:"This teaching skill focuses on form for the first half of repetitions of an exercise, and flow the second half of repetitions.",
+   qz:"這項教學技巧在動作前半段的反覆聚焦於「形」，後半段聚焦於「流暢」。",
+   o:["Touch techniques","Teachers mindfulness","Exercise delivery","Economy of words"],
+   oz:["觸碰技巧","教師的覺察","動作呈現（Exercise Delivery）","用字精簡"],correct:2,picked:2,
+   ex:"Exercise Delivery：前半重「目標與技巧（形）」，後半重「能量、力度、流暢」。"},
+  {src:"Quiz 6",
+   q:"The 5 parts of the mind include the following EXCEPT:",
+   qz:"「五項心智」包含以下何者「以外」的選項（即哪一個不是）？",
+   o:["Will and desire","Imagination","Intuition","Emotion"],
+   oz:["意志與渴望","想像","直覺","情緒"],correct:3,picked:3,
+   ex:"五心智：智慧、記憶、直覺、想像、意志與渴望；情緒（Emotion）不在內。"},
+  {src:"Quiz 6",
+   q:"Progression guidelines:",
+   qz:"進階準則：",
+   o:["Do not take transitions into consideration","Challenge the ideal with props, rhythm, flow, breath – not more repetitions","Do not apply to mat exercises","Change every session"],
+   oz:["不需考慮轉換動作","以道具、節奏、流暢、呼吸挑戰理想標準，而非增加次數","不適用於墊上動作","每次課程都更換"],correct:1,picked:1,
+   ex:"以道具、節奏、流暢、呼吸挑戰理想標準，而非靠增加次數。"},
+  {src:"Quiz 6",
+   q:"An indicator of progressing students too quickly is",
+   qz:"代表「學員進階太快」的指標是：",
+   o:["Marked improvements in coordination and flow","Improved technique and precision","Enhanced Concentration","Pain and frustration following the session"],
+   oz:["協調與流暢明顯進步","技巧與精準度提升","專注力增強","課後出現疼痛與挫折"],correct:3,picked:3,
+   ex:"課後出現疼痛與挫折，代表進階太快。"},
+  {src:"Quiz 6",
+   q:"The first thing to say when cueing an exercise is",
+   qz:"提示一個動作時，第一句該說的是：",
+   o:["The exercise safety","A powerhouse cue","The exercise setup","The exercise name"],
+   oz:["動作的安全事項","核心動力區口令","動作的預備","動作的名稱"],correct:3,picked:2,
+   ex:"五部公式：先說「動作名稱」，學員才知道方向並學會順序。（你原本選了「動作的預備」）"},
+  {src:"Quiz 6",
+   q:"What is the primary goal when cueing the exercise execution?",
+   qz:"提示動作執行（execution）時，首要目標是：",
+   o:["To add the powerhouse cue","To flow through the order","To get the exercise in motion","To provide imagery so they can illicit movement quality"],
+   oz:["加上核心動力區口令","流暢地依序進行","讓動作動起來","提供意象以引出動作品質"],correct:2,picked:2,
+   ex:"Execution 的首要目標永遠是「讓學員動起來」。"},
+  {src:"Quiz 6",
+   q:"Cueing changes as a student progresses.",
+   qz:"口令會隨著學員的進步而改變。",
+   o:["True","False"],oz:["是","否"],correct:0,picked:0,
+   ex:"口令會隨學員程度／學習階段改變，為「是」。"},
+  {src:"Quiz 6",
+   q:"Keeping students moving together",
+   qz:"讓學員同步一起移動：",
+   o:["Allows your cues to make sense for each part of the exercises","Helps you to see the bodies and give corrections","Is not important - they should work at their own pace","A & B"],
+   oz:["讓你的口令能對應動作的每個環節","幫助你觀察身體並給予矯正","不重要—他們應依自己步調進行","A 與 B"],correct:3,picked:3,
+   ex:"同步移動讓口令對得上動作（A），也方便觀察與矯正（B），選 A 與 B。"},
+  {src:"Quiz 6",
+   q:"What is not part of the class format for a Pilates mat class?",
+   qz:"下列何者「不是」皮拉提斯墊上課程架構的一部分？",
+   o:["Opening","Breathing","Centering","Ending"],
+   oz:["開場（Opening）","呼吸（Breathing）","定心（Centering）","結束（Ending）"],correct:1,picked:1,
+   ex:"課程架構：開場、定心、動態墊上、結束；呼吸（Breathing）不是架構分段。"},
+
+  {src:"Endings",
+   q:"The Ending Lunges and Splits is",
+   qz:"結束動作「弓步與劈腿（Lunges and Splits）」：",
+   o:["Appropriate to give as homework to students","Builds strength and stamina","Ends with the full splits","A or B"],
+   oz:["適合當作回家作業給學員","建立力量與耐力","以完整劈腿結束","A 或 B"],correct:0,picked:0,
+   ex:"弓步與劈腿適合當作回家作業。"},
+  {src:"Endings",
+   q:"Students may need to start with head away from the wall in the Wall Series if their posture is:",
+   qz:"在靠牆系列中，若學員的姿勢屬於下列何者，可能需要從「頭離牆」開始？",
+   o:["Lordotic","Military","Kyphotic","All of the above"],
+   oz:["脊椎前凸（凹背）","軍人姿勢","脊椎後凸（駝背）","以上皆是"],correct:2,picked:2,
+   ex:"駝背（Kyphotic）者頭難貼牆，需從頭離牆開始。"},
+  {src:"Endings",
+   q:"Endings have a common goal of improving the posture.",
+   qz:"結束動作（Endings）有一個共同目標：改善姿勢。",
+   o:["True","False"],oz:["是","否"],correct:0,picked:0,
+   ex:"Endings（含靠牆系列）共同目標是改善姿勢，為「是」。"},
+
+  {src:"Practice Exam",
+   q:"A good way to activate the abs is to lie supine and press with maximum force against the legs with the hands, inhale, and extend the spine.",
+   qz:"啟動腹部的好方法是：仰躺、用雙手以最大力量推抵雙腿、吸氣，並伸展脊椎。",
+   o:["True","False"],oz:["是","否"],correct:1,picked:1,
+   ex:"這是在描述 ISO-Abs，但有錯：應是吐氣、用內收上提啟動腹部，不是『最大力量』也不是『伸展脊椎』，故為否。"},
+  {src:"Practice Exam",
+   q:"Which of the following is NOT a Pilates Principle?",
+   qz:"下列何者「不是」皮拉提斯原則？",
+   o:["Centering","Precision","Alignment","Breathing"],
+   oz:["定心","精準","對位（Alignment）","呼吸"],correct:2,picked:2,
+   ex:"六大原則：專注、定心、控制、呼吸、精準、流暢動作。對位（Alignment）不在其中。"},
+  {src:"Practice Exam",
+   q:"The 5 Main Parts of the Formula for Success include all of the following EXCEPT:",
+   qz:"「成功教學五部公式」的五大部分包含以下何者「以外」（即哪一個不是）？",
+   o:["Flowing Movement","Peak Pilates Principles","Teaching Methodology","Presentation Skills"],
+   oz:["流暢的動作","Peak 原則","教學法","呈現技巧"],correct:0,picked:0,
+   ex:"五部公式包含：Peak 原則、課程結構、教學法、呈現技巧、以及給口令的公式。『流暢動作』是六大原則之一，不是五部公式的部分。"},
+  {src:"Practice Exam",
+   q:"The term anterior pelvic tilt describes a position where the pelvic girdle tips forward and the low back is flat.",
+   qz:"「骨盆前傾」是指骨盆向前傾、且下背變平的姿勢。",
+   o:["True","False"],oz:["是","否"],correct:1,picked:0,
+   ex:"骨盆前傾會讓下背曲線『增加（凹背／前凸）』，不是變平；下背變平是骨盆後傾。故為否。（你截圖選了 True）"},
+  {src:"Practice Exam",
+   q:"The add in exercises",
+   qz:"加入動作（Add-In）：",
+   o:["Are traditional Pilates exercises.","Break up the flow.","Are part of the classical order.","Add variety to class."],
+   oz:["是傳統皮拉提斯動作","會打斷流暢度","是古典順序的一部分","為課程增添變化"],correct:3,picked:3,
+   ex:"Add-In 不是傳統動作、不在古典順序內、也不該打斷流暢；它們為課程增添變化（教導動作概念）。"},
+  {src:"Practice Exam",
+   q:"Pilates equipment was created to support the mat.",
+   qz:"皮拉提斯器械的設計是為了輔助墊上動作。",
+   o:["True","False"],oz:["是","否"],correct:0,
+   ex:"墊上是基礎，器械用來輔助、支持墊上的工作，為是。"},
+  {src:"Practice Exam",
+   q:"The Five Parts of the Mind are the same as the Pilates Principles.",
+   qz:"「心智的五個部分」與「皮拉提斯原則」是同一件事。",
+   o:["True","False"],oz:["是","否"],correct:1,
+   ex:"兩者不同。原則是六大；心智五部分是智力、記憶、直覺、想像、意志與渴望。故為否。"},
+  {src:"Practice Exam",
+   q:"Neutral pelvis and neutral spine are the same thing.",
+   qz:"中立骨盆與中立脊椎是同一件事。",
+   o:["True","False"],oz:["是","否"],correct:1,
+   ex:"兩者是不同概念，故為否。"},
+  {src:"Practice Exam",
+   q:"Doing 'the walk' allows you to see and be seen.",
+   qz:"「做那段走動（the walk）」讓你能看見學員、也被學員看見。",
+   o:["True","False"],oz:["是","否"],correct:0,
+   ex:"老師走動巡視能觀察學員，也讓自己被看見、可示範，為是。"},
+  {src:"Practice Exam",
+   q:"Economy of words is a good habit to develop with cueing because:",
+   qz:"給口令時養成「用字精簡」的好習慣，因為：",
+   o:["It helps the student focus on what is important to perform the exercise","It helps keep the student and teacher in the present moment","It aids in creating flow","All of the above"],
+   oz:["幫助學員聚焦於完成動作的重點","幫助師生都保持在當下","有助於創造流暢","以上皆是"],correct:3,
+   ex:"精簡用字能幫助聚焦、保持當下、創造流暢，以上皆是。"},
+  {src:"Practice Exam",
+   q:"How did Joseph Pilates end a workout?",
+   qz:"Joseph Pilates 如何結束一堂課？",
+   o:["In Rest position","Lying down and relaxing","Sitting and stretch","Standing upright"],
+   oz:["在休息姿勢","躺下放鬆","坐著伸展","站立站直"],correct:3,
+   ex:"課程的結束（Ending）以站立收尾、回到良好姿勢，故為站立站直。"},
+  {src:"Practice Exam",
+   q:"Cue the ______ first when teaching.",
+   qz:"教學時，第一個要提示的是＿＿＿。",
+   o:["Powerhouse","Exercise Name","Correction","Setup"],
+   oz:["核心動力區","動作名稱","矯正","預備"],correct:1,
+   ex:"五部公式：先說『動作名稱』，學員才知道方向並學會順序。"},
+  {src:"Practice Exam",
+   q:"A Building Block form of an exercise can be created by:",
+   qz:"要做出一個動作的「建構基礎（Building Block）」版本，可以透過：",
+   o:["Extending away from centerline","Working out of the joint","Working more proximally","Using momentum"],
+   oz:["遠離中線伸展","在關節外側工作","在更靠近身體（近端）處工作","使用慣性／衝力"],correct:2,
+   ex:"建構基礎讓動作更易達成。在更近端工作（縮短槓桿）會降低難度；遠離中線、用慣性反而更難。"},
+  {src:"Practice Exam",
+   q:"What is the name for the mini exercises that are taught to improve basic bio-mechanical patterns?",
+   qz:"用來改善基本生物力學動作模式的「小型練習」叫做什麼？",
+   o:["Building Blocks","Preparatory Exercises","Add-Ins","Fundamentals"],
+   oz:["建構基礎","預備動作","加入動作","基本功（Fundamentals）"],correct:3,
+   ex:"這些是 Fundamentals（基本功），用來建立基本動作模式。"},
+  {src:"Practice Exam",
+   q:"The timing for a Full Mat Class is: Parts A and B are 25 minutes each, Parts C & D are 5 minutes each.",
+   qz:"完整墊上課程的時間分配是：A、B 各 25 分鐘，C、D 各 5 分鐘。",
+   o:["True","False"],oz:["是","否"],correct:1,
+   ex:"課程架構：開場 2–3、定心 3–5、動態墊上 40–45、結束 5 分鐘。動態墊上才是最長的，故敘述為否。"},
+  {src:"Practice Exam",
+   q:"Endings are postural exercises.",
+   qz:"結束動作（Endings）是姿勢類（改善體態）的動作。",
+   o:["True","False"],oz:["是","否"],correct:0,
+   ex:"Endings（含靠牆系列）目標是改善姿勢，為是。"},
+  {src:"Practice Exam",
+   q:"The following is true of Classical Pilates Mat:",
+   qz:"關於古典皮拉提斯墊上，下列何者為真？",
+   o:["Exercise is performed to failure","Each exercise is always performed to ideal without modification","Exercises must always flow without interruption","The transition is considered part of the exercise"],
+   oz:["動作要做到力竭","每個動作一律做到理想標準、不做調整","動作必須永遠不中斷地流暢進行","轉換被視為動作的一部分"],correct:3,
+   ex:"轉換要當作動作的一部分來教。其餘皆錯：不做到力竭、可依學員調整、教學時可中斷。"},
+  {src:"Practice Exam",
+   q:"The ending Lunges and Splits",
+   qz:"結束動作「弓步與劈腿（Lunges and Splits）」：",
+   o:["Is appropriate to give as homework to students","Builds strength","Should be used every class","All of the above"],
+   oz:["適合當作回家作業給學員","建立力量","應每堂課使用","以上皆是"],correct:0,picked:0,
+   ex:"弓步與劈腿適合當回家作業。"},
+  {src:"Practice Exam",
+   q:"\"Scoop\" is a way of cueing and teaching students to activate their abdominals.",
+   qz:"「Scoop（內收上提）」是一種提示與教導學員啟動腹部的方式。",
+   o:["True","False"],oz:["是","否"],correct:0,picked:0,
+   ex:"Scoop 正是用來教學員啟動腹部的口令，為是。"},
+  {src:"Practice Exam",
+   q:"The ideal version of an exercise is its performance exactly as pictured in Joseph Pilates' books.",
+   qz:"一個動作的「理想版本」就是完全照 Joseph Pilates 書中圖片的樣子來做。",
+   o:["True","False"],oz:["是","否"],correct:1,picked:1,
+   ex:"理想標準是依『個別學員』量身設定的目標，不是死板照書中圖片，故為否。"},
+  {src:"Practice Exam",
+   q:"The Fundamental of ______ helps students learn to move their arms from their back and connect their ribs to their scapula.",
+   qz:"基本功「＿＿＿」幫助學員學會從背部帶動手臂，並連結肋骨與肩胛骨。",
+   o:["Puppet Arms","ISO-Abs","Rib Cage Arms","Neck Curls"],
+   oz:["木偶手臂","ISO 腹部","肋廓手臂（Rib Cage Arms）","頸部捲動"],correct:2,picked:2,
+   ex:"Rib Cage Arms 教學員從背部帶動手臂、連結肋骨與肩胛。"},
+  {src:"Practice Exam",
+   q:"Which of the following is not an introductory exercise?",
+   qz:"下列何者「不是」入門（Introductory）動作？",
+   o:["Rolling Like a Ball","Single Leg Stretch","Criss Cross","Saw"],
+   oz:["球式滾動","單腿伸展","交叉（Criss Cross）","鋸子式"],correct:2,picked:2,
+   ex:"動作清單：球式滾動、單腿伸展、鋸子式都是 Intro；交叉（Criss Cross）是 LI（Beginning），不是入門。"}
+];
+
+document.getElementById('totalCount').textContent=RAW.length;
+
+let pool=[], state=[];
+const quizEl=document.getElementById('quiz');
+const scoreEl=document.getElementById('score');
+const progEl=document.getElementById('prog');
+const resultEl=document.getElementById('result');
+
+function shuffle(arr){
+  const a=arr.slice();
+  for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]];}
+  return a;
+}
+
+/* 偵測「指涉其他選項」的題目（A & C、Both A and B、A or B、All/None of the above），這類不打散順序 */
+const REF=/\b(?:both\s+)?[A-D]\s*(?:&|and|or)\s*[A-D]\b|above\b/i;
+function isLocked(it){return it.o.some(o=>REF.test(o));}
+
+function render(){
+  resultEl.classList.remove('show');
+  quizEl.innerHTML='';
+  const doOpt=document.getElementById('shuffleOpt').checked;
+  pool=shuffle(RAW);
+  state=pool.map(it=>{
+    const keepOrder = !doOpt || isLocked(it);
+    const order = keepOrder ? it.o.map((v,i)=>({i})) : shuffle(it.o.map((v,i)=>({i})));
+    return {answered:false,chosen:null,order};
+  });
+  pool.forEach((it,qi)=>{
+    const card=document.createElement('div');
+    card.className='q';card.id='q'+qi;
+    let opts='';
+    state[qi].order.forEach((op,di)=>{
+      const letter=String.fromCharCode(65+di);
+      opts+=`<div class="opt" data-q="${qi}" data-orig="${op.i}"><div class="key">${letter}</div>
+        <div class="label">${it.o[op.i]}<span class="zh">${it.oz[op.i]}</span></div></div>`;
+    });
+    const lockBadge=(doOpt && isLocked(it))?`<span class="qsrc" style="border-color:var(--clay);color:var(--clay)">選項固定</span>`:'';
+    card.innerHTML=`<div class="qnum"><span>第 ${qi+1} 題</span><span style="display:flex;gap:6px">${lockBadge}<span class="qsrc">${it.src}</span></span></div>
+      <div class="qtext">${it.q}</div><div class="qtext-zh">${it.qz}</div>${opts}<div class="explain"></div>`;
+    quizEl.appendChild(card);
+  });
+  quizEl.querySelectorAll('.opt').forEach(o=>o.onclick=onPick);
+  updateScore();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function onPick(e){
+  const el=e.currentTarget, qi=+el.dataset.q;
+  if(state[qi].answered)return;
+  const orig=+el.dataset.orig;
+  state[qi].answered=true;state[qi].chosen=orig;
+  const it=pool[qi], card=document.getElementById('q'+qi);
+  card.classList.add('answered');
+  card.querySelectorAll('.opt').forEach(opt=>{
+    const oi=+opt.dataset.orig;
+    if(oi===it.correct)opt.classList.add('correct');
+    if(oi===orig&&orig!==it.correct)opt.classList.add('wrong');
+    if(oi===orig)opt.classList.add('sel');
+  });
+  const ok=orig===it.correct;
+  let prev='';
+  if(it.picked!=null && it.picked!==it.correct){prev=`<div class="prev">你截圖中原本選了：<b>${it.o[it.picked]}（${it.oz[it.picked]}）</b></div>`;}
+  card.querySelector('.explain').innerHTML=`<span class="tag ${ok?'ok':'no'}">${ok?'答對':'答錯'}</span><div>${it.ex}</div>${prev}`;
+  updateScore();
+}
+
+function updateScore(){
+  const total=pool.length;let done=0,right=0;
+  state.forEach((s,i)=>{if(s.answered){done++;if(s.chosen===pool[i].correct)right++;}});
+  scoreEl.textContent=`${right} / ${total}`;
+  progEl.style.width=(done/total*100)+'%';
+  if(done===total)finish(right,total);
+}
+
+function finish(right,total){
+  resultEl.classList.add('show');
+  document.getElementById('rScore').textContent=`${right} / ${total}`;
+  const pct=Math.round(right/total*100);
+  document.getElementById('rTitle').textContent=pct>=80?'做得很好！':'再複習一下';
+  document.getElementById('rMsg').textContent=`正確率 ${pct}%`;
+  resultEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+document.getElementById('shuffleOpt').onchange=render;
+document.getElementById('retry').onclick=render;
+document.getElementById('showAll').onclick=()=>{
+  pool.forEach((it,qi)=>{
+    if(!state[qi].answered){
+      const card=document.getElementById('q'+qi);
+      const opt=[...card.querySelectorAll('.opt')].find(o=>+o.dataset.orig===it.correct);
+      if(opt)opt.click();
+    }
+  });
+};
+
+render();
+</script>
+</body>
+</html>
