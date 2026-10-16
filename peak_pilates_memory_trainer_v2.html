@@ -1,0 +1,70 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Peak Pilates Level I 記憶訓練</title>
+<style>
+:root{--bg:#f5efe6;--paper:#fffdf8;--ink:#25221e;--muted:#746d64;--red:#93473b;--green:#356555;--line:#ded3c5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.wrap{max-width:980px;margin:auto;padding:26px 18px 60px}h1{font-size:clamp(28px,5vw,44px);margin:5px 0}.eyebrow{color:var(--red);font-size:12px;letter-spacing:.15em;font-weight:800}.desc{color:var(--muted);line-height:1.55}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}button{border:1px solid var(--line);background:var(--paper);padding:10px 14px;border-radius:12px;font-weight:750;cursor:pointer}button.active,button.primary{background:var(--ink);color:white;border-color:var(--ink)}
+.mode.active{background:var(--red);border-color:var(--red)}.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:14px}
+.big{font-size:clamp(22px,4vw,34px);font-weight:850;margin:8px 0 18px}.label{font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+input{width:100%;padding:13px;border:1px solid var(--line);border-radius:11px;font-size:16px;background:white;margin:5px 0 10px}
+.feedback{padding:11px;border-radius:11px;margin-top:10px;display:none}.ok{display:block;background:#e4efe9;color:#285143}.no{display:block;background:#f4e2de;color:#7c332b}
+.progress{height:8px;background:#e7ddd1;border-radius:9px;overflow:hidden;margin:12px 0}.bar{height:100%;background:var(--green);width:0}.muted{color:var(--muted);font-size:13px}
+.sequence{display:grid;gap:7px}.seq{border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff}.seq.correct{border-color:#7aa38f}.seq.wrong{border-color:#bf776c}
+.drag{display:grid;grid-template-columns:36px 1fr auto;gap:8px;align-items:center;border:1px solid var(--line);padding:10px;border-radius:12px;background:#fff;margin:7px 0;cursor:grab}.n{font-weight:900}.rep{font-size:12px;color:var(--green)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}.stat b{font-size:20px;display:block}
+@media(max-width:620px){.grid{grid-template-columns:1fr}.drag{grid-template-columns:30px 1fr}.drag .rep{grid-column:2}}
+</style></head><body><div class="wrap">
+<div class="eyebrow">PEAK PILATES • LEVEL I MODULE 1</div><h1>Mat / Reformer 記憶訓練</h1>
+<div class="desc">從「辨認」升級到「主動回憶」。建議依序練：逐題回憶 → 完整默寫 → 拖拉快速複習。</div>
+<div class="row"><button id="mat" class="active" onclick="setType('mat')">MAT</button><button id="reformer" onclick="setType('reformer')">REFORMER</button></div>
+<div class="row"><button class="mode active" id="recall" onclick="setMode('recall')">① 逐題回憶</button><button class="mode" id="write" onclick="setMode('write')">② 完整默寫</button><button class="mode" id="drag" onclick="setMode('drag')">③ 拖拉複習</button></div>
+<div class="grid"><div class="stat"><b id="score">0/0</b><span class="muted">本輪答對</span></div><div class="stat"><b id="pos">—</b><span class="muted">目前進度</span></div><div class="stat"><b id="miss">0</b><span class="muted">錯題數</span></div></div>
+<div class="progress"><div class="bar" id="bar"></div></div><div id="app"></div>
+</div>
+<script>
+const D={"mat": [["Hundred", "10 Full Breaths / 100 pumps", ""], ["The Roll Up", "5", ""], ["One Leg Circle", "5 each direction", ""], ["Rolling Like a Ball", "6–8 (Omit first lesson)", ""], ["Single Leg Stretch", "6–10", ""], ["Double Leg Stretch", "6–10", ""], ["Spine Stretch Forward", "5", ""], ["Saw", "3–5 each direction", ""], ["Side Kick Series: Front & Back", "5–10", ""], ["Side Kick Series: Up & Down", "5", ""], ["Side Kick Series: Inner Thigh Lifts & Circles", "5–8 each", ""], ["Teaser – One Leg", "3–5", ""], ["Seal", "6–8", ""]], "reformer": [["Footwork Series: Toes, Arches, Heels, Tendon Stretch", "10 each", "3–4"], ["Hundred", "10 Full Breaths / 100 pumps", "3–4"], ["Arm Series: Reach & Pull, Circles, Tricep Press", "3–6", "2"], ["Frog", "5–8", "2"], ["Leg Circles", "5–8", "2"], ["Stomach Massage Series: Round", "10", "3–4"], ["Stomach Massage Series: Hands Back", "10", "3"], ["Stomach Massage Series: Reaching", "5", "2"], ["Short Box Series: Round", "3–5", "2"], ["Short Box Series: Flat", "3–5", "2"], ["Short Box Series: Side to Side", "3 each side alternating", "2"], ["Short Box Series: Twist Only", "3 each side alternating", "2"], ["Short Box Series: Tree – Front Stretch", "3 kicks, hold stretch", "2"], ["Long Stretch Series: Elephant", "5–10", "2"], ["Knee Stretch Series: Round", "5–10", "2"], ["Knee Stretch Series: Arched or Flat", "5–10", "2"], ["Running", "10", "3–4"], ["Pelvic Lift", "10", "3–4"]]};let type='mat',mode='recall',i=0,good=0,total=0,miss=[],order=[];
+const norm=s=>s.toLowerCase().replace(/[–—-]/g,' ').replace(/&/g,'and').replace(/series/g,'').replace(/the /g,'').replace(/[^a-z0-9]+/g,' ').trim();
+function fuzzy(a,b){a=norm(a);b=norm(b);if(a===b)return true;let A=a.split(' '),B=b.split(' ');return B.filter(x=>A.includes(x)).length>=Math.max(1,Math.ceil(B.length*.7))}
+function update(){document.getElementById('score').textContent=good+'/'+total;document.getElementById('miss').textContent=miss.length;document.getElementById('pos').textContent=(i+1)+' / '+D[type].length;document.getElementById('bar').style.width=(i/D[type].length*100)+'%'}
+function setType(t){type=t;document.getElementById('mat').classList.toggle('active',t==='mat');document.getElementById('reformer').classList.toggle('active',t==='reformer');restart()}
+function setMode(m){mode=m;document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));document.getElementById(m).classList.add('active');restart()}
+function restart(){i=0;good=0;total=0;miss=[];order=D[type].map((_,j)=>j);render();update()}
+function render(){if(mode==='recall') recall();else if(mode==='write') writeAll();else dragMode()}
+function recall(){
+ let prev=i===0?'START':D[type][i-1][0], reform=type==='reformer';
+ document.getElementById('app').innerHTML=`<div class="card"><div class="label">${i===0?'從第一個開始':'上一個動作'}</div><div class="big">${prev}</div>
+ <label class="label">下一個動作是？</label><input id="ans" autocomplete="off" placeholder="不要看提示，直接輸入英文動作名稱">
+ <label class="label">Repetitions / 次數</label><input id="reps" autocomplete="off" placeholder="例如 5–8">
+ ${reform?'<label class="label">Springs</label><input id="spr" autocomplete="off" placeholder="例如 2 或 3–4">':''}
+ <button class="primary" onclick="checkRecall()">送出答案</button><div id="fb" class="feedback"></div></div>`;
+ document.getElementById('ans').focus();update()
+}
+function checkRecall(){
+ let x=D[type][i], a=document.getElementById('ans').value, r=document.getElementById('reps').value, s=type==='reformer'?document.getElementById('spr').value:'';
+ let nameOK=fuzzy(a,x[0]), repOK=norm(r)===norm(x[1])||norm(x[1]).includes(norm(r))&&norm(r).length>0, sprOK=type!=='reformer'||norm(s)===norm(x[2]);
+ total++; if(nameOK&&repOK&&sprOK)good++;else miss.push(i);
+ let f=document.getElementById('fb');f.className='feedback '+(nameOK&&repOK&&sprOK?'ok':'no');
+ f.innerHTML=(nameOK&&repOK&&sprOK?'✓ 完全正確':'✗ 再記一次')+`<br><b>${x[0]}</b><br>Reps: ${x[1]}${type==='reformer'?'<br>Springs: '+x[2]:''}<br><br><button onclick="next()">下一題 →</button>`;
+ update()
+}
+function next(){i++;if(i>=D[type].length){finish()}else recall()}
+function finish(){
+ let retry=miss.length?`<button class="primary" onclick="retryMiss()">只重練錯題</button>`:'';
+ document.getElementById('app').innerHTML=`<div class="card"><div class="label">完成</div><div class="big">${good}/${total}</div><p>${miss.length?'有 '+miss.length+' 題需要加強。':'🎉 全部正確！'}</p>${retry} <button onclick="restart()">再練一次</button></div>`;
+ document.getElementById('bar').style.width='100%';document.getElementById('pos').textContent='完成'
+}
+function retryMiss(){let ids=[...new Set(miss)];let subset=ids.map(j=>D[type][j]);D._temp=subset;alert('錯題已標記。建議再跑一次逐題回憶；錯題會優先記錄在本輪成績中。');restart()}
+function writeAll(){
+ let rows=D[type].map((x,j)=>`<div class="seq"><b>#${j+1}</b><input id="w${j}" placeholder="動作名稱"><input id="wr${j}" placeholder="Repetitions">${type==='reformer'?`<input id="ws${j}" placeholder="Springs">`:''}</div>`).join('');
+ document.getElementById('app').innerHTML=`<div class="card"><div class="label">零提示完整默寫</div><div class="big">${type==='mat'?'MAT':'REFORMER'} — START</div><p class="muted">依順序把整套寫出來。全部完成後一次批改。</p><div class="sequence">${rows}</div><br><button class="primary" onclick="gradeWrite()">一次批改</button><div id="wf" class="feedback"></div></div>`;document.getElementById('w0').focus()
+}
+function gradeWrite(){good=0;total=D[type].length;miss=[];D[type].forEach((x,j)=>{let ok=fuzzy(document.getElementById('w'+j).value,x[0]);let rr=norm(document.getElementById('wr'+j).value),rok=rr&&norm(x[1]).includes(rr);let sok=type!=='reformer'||norm(document.getElementById('ws'+j).value)===norm(x[2]);let el=document.getElementById('w'+j).parentElement;el.classList.add(ok&&rok&&sok?'correct':'wrong');if(ok&&rok&&sok)good++;else miss.push(j)});i=D[type].length;update();let f=document.getElementById('wf');f.className='feedback '+(good===total?'ok':'no');f.innerHTML=`${good}/${total} 完全正確。<br>${miss.map(j=>'#'+(j+1)+' '+D[type][j][0]+' — '+D[type][j][1]+(type==='reformer'?' — '+D[type][j][2]+' springs':'')).join('<br>')}`}
+function dragMode(){order=D[type].map((_,j)=>j);shuffle();drawDrag()}
+function shuffle(){for(let j=order.length-1;j>0;j--){let k=Math.floor(Math.random()*(j+1));[order[j],order[k]]=[order[k],order[j]]}}
+function drawDrag(){let h=order.map((idx,p)=>`<div class="drag" draggable="true" data-id="${idx}"><span class="n">${p+1}</span><b>${D[type][idx][0]}</b><span class="rep">${D[type][idx][1]}${type==='reformer'?' • '+D[type][idx][2]+' springs':''}</span></div>`).join('');document.getElementById('app').innerHTML=`<div class="card"><p class="muted">這是辨認／快速複習模式。拖曳排回 Peak 順序。</p><div id="dl">${h}</div><br><button class="primary" onclick="gradeDrag()">檢查</button><div id="df" class="feedback"></div></div>`;enableDrag()}
+function enableDrag(){let box=document.getElementById('dl'),dragging=null;box.querySelectorAll('.drag').forEach(el=>{el.ondragstart=()=>dragging=el;el.ondragover=e=>{e.preventDefault();let r=el.getBoundingClientRect();box.insertBefore(dragging,e.clientY<r.top+r.height/2?el:el.nextSibling)};el.ondragend=()=>{order=[...box.children].map(x=>+x.dataset.id);drawDrag()}})}
+function gradeDrag(){order=[...document.getElementById('dl').children].map(x=>+x.dataset.id);let n=order.filter((x,j)=>x===j).length;let f=document.getElementById('df');f.className='feedback '+(n===order.length?'ok':'no');f.textContent=n===order.length?'✓ 全部順序正確！':`${n}/${order.length} 個位置正確。`}
+restart()
+</script></body></html>
