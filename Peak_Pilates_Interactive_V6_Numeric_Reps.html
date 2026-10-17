@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Peak Pilates | Mat & Reformer 記憶訓練 V6</title>
+<style>
+:root{color-scheme:light;--bg:#f5f0e8;--paper:#fffdfa;--ink:#282420;--muted:#736b63;--brick:#965044;--deep:#355e50;--line:#e1d7cb;--good:#e3f0e6;--bad:#f7e6e0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;color:var(--ink);line-height:1.5}
+main{max-width:900px;margin:0 auto;padding:26px 15px 65px}h1{font-size:clamp(25px,5vw,42px);margin:7px 0 10px;line-height:1.22}h2{font-size:19px;margin:0 0 10px}p{margin:8px 0;color:var(--muted)}.eyebrow{font-size:12px;color:var(--brick);font-weight:800;letter-spacing:.12em}
+.card{padding:18px;background:var(--paper);border:1px solid var(--line);border-radius:16px;margin:14px 0}.tabs,.actions{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}button,select,input{font:inherit}button{border-radius:12px;border:1px solid var(--line);padding:10px 13px;background:#fffdfa;color:var(--ink);font-weight:700;cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #b5b3e5}button.primary,button.selected{background:var(--brick);border-color:var(--brick);color:#fff}button.secondary{background:var(--deep);color:#fff;border-color:var(--deep)}input,select{width:100%;border:1px solid #cfc6bc;border-radius:10px;padding:11px 12px;margin:5px 0 12px;background:white;min-height:44px}label{display:block;font-weight:650;font-size:14px}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.stats>div{background:#fffdfa;border:1px solid var(--line);border-radius:13px;padding:9px}.stats strong{display:block;font-size:21px}.small{color:var(--muted);font-size:12px}.progress{height:7px;background:#e5dad0;border-radius:10px;overflow:hidden;margin:14px 0}.progress>div{height:100%;width:0;background:var(--deep);transition:width .2s}.prompt{font-size:24px;font-weight:800;margin:9px 0 18px}.feedback{border-radius:12px;padding:12px;margin-top:12px}.feedback.good{background:var(--good);color:#265342}.feedback.bad{background:var(--bad);color:#7d3931}.answers{margin:0;padding-left:22px}.row{border:1px solid var(--line);border-radius:12px;padding:10px;margin:8px 0;background:white}.row.bad{border-color:#c87972}.row.good{border-color:#7aa68c}.row-head{display:flex;gap:8px;align-items:center;justify-content:space-between}.move{font-weight:700}.drag-control{display:flex;gap:6px}button.smallbtn{padding:4px 9px;border-radius:7px;min-width:35px}.muted{color:var(--muted)}.tag{display:inline-block;background:#efe9df;border-radius:20px;font-size:12px;padding:4px 9px;margin:4px 5px 4px 0}.source{font-size:12px;color:#70675d}.inline-check{display:flex;gap:10px;align-items:center}.inline-check input{width:18px;height:18px;margin:0}.hidden{display:none!important}.divider{border-top:1px solid var(--line);margin:20px 0}.info{padding:10px 12px;background:#f7f1e9;border-radius:9px}.number-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.number-box{display:flex;align-items:center;gap:8px}.number-box input{min-width:0;flex:1}.unit-line{font-size:13px;color:var(--deep);font-weight:700;margin:-4px 0 12px}.number-hint{font-size:12px;color:var(--muted);margin:2px 0 8px}.footer{font-size:12px;color:var(--muted);margin-top:14px}
+@media(max-width:600px){.card{padding:13px}.stats strong{font-size:17px}.row-head{align-items:flex-start}.drag-control{flex-direction:column}button{padding:10px}.prompt{font-size:21px}}
+</style></head><body><main>
+<div class="eyebrow">PEAK PILATES · LEVEL I MODULE 1 · V6</div>
+<h1>Mat / Reformer 動作記憶訓練</h1>
+<p>次數只填數字，單位自動顯示；Reformer 彈簧數也只填數字。另附 Fundamentals 教材明確列出的對應動作。</p>
+<div class="card" style="border-left:4px solid var(--deep);background:#eff4ee"><strong>操作方式：</strong>請在 Safari / Chrome 的完整網頁中操作。ChatGPT 檔案預覽可能會阻擋按鈕。若看見純文字或無法按，請下載 ZIP 解壓縮後，用瀏覽器開啟 HTML。</div>
+<div class="tabs" aria-label="器械"><button id="tab-mat" class="selected" type="button">MAT</button><button id="tab-reformer" type="button">REFORMER</button></div>
+<div class="tabs" aria-label="練習模式"><button id="mode-recall" class="selected" type="button">逐題回憶</button><button id="mode-write" type="button">完整默寫</button><button id="mode-drag" type="button">順序整理</button></div>
+<div class="stats"><div><strong id="score">0 / 0</strong><span class="small">完全正確</span></div><div><strong id="progress-text">1 / 13</strong><span class="small">進度</span></div><div><strong id="wrong">0</strong><span class="small">錯誤數</span></div></div>
+<div class="progress"><div id="progress-fill"></div></div>
+<section id="practice" aria-live="polite"></section>
+<section class="card" id="fund-card"><h2>Fundamentals 對應練習</h2>
+<p>以《Fundamentals》教材 Uses 欄位明確列出的動作為依據。沒有列出不表示該 Fundamental 無法用於教學。</p>
+<label for="fund-select">選擇要練習的 Mat / Reformer 動作</label><select id="fund-select"></select>
+<div class="actions"><button id="fund-random" type="button">隨機抽題</button><button id="fund-toggle" class="secondary" type="button">隱藏答案，先回想</button></div>
+<div id="fund-result" class="info"></div><div class="source">資料：《Fundamentals》教材各 Fundamental 的 Uses 段落；頁碼標在答案旁。</div></section>
+<div class="footer">使用說明：範圍題請分別填最少及最多的數字；單位固定顯示。這是可離線開啟的獨立 HTML 網頁，不依賴任何 SVG、外部 JS 或網路資源。教材同名動作的對應按原文呈現，不代表官方考試唯一標準答案。</div>
+</main>
+<script>
+'use strict';
+const DATA={"mat": [["Hundred", "10 Full Breaths / 100 pumps", ""], ["The Roll Up", "5", ""], ["One Leg Circle", "5 each direction", ""], ["Rolling Like a Ball", "6–8 (Omit first lesson)", ""], ["Single Leg Stretch", "6–10", ""], ["Double Leg Stretch", "6–10", ""], ["Spine Stretch Forward", "5", ""], ["Saw", "3–5 each direction", ""], ["Side Kick Series: Front & Back", "5–10", ""], ["Side Kick Series: Up & Down", "5", ""], ["Side Kick Series: Inner Thigh Lifts & Circles", "5–8 each", ""], ["Teaser – One Leg", "3–5", ""], ["Seal", "6–8", ""]], "reformer": [["Footwork Series: Toes, Arches, Heels, Tendon Stretch", "10 each", "3–4"], ["Hundred", "10 Full Breaths / 100 pumps", "3–4"], ["Arm Series: Reach & Pull, Circles, Tricep Press", "3–6", "2"], ["Frog", "5–8", "2"], ["Leg Circles", "5–8", "2"], ["Stomach Massage Series: Round", "10", "3–4"], ["Stomach Massage Series: Hands Back", "10", "3"], ["Stomach Massage Series: Reaching", "5", "2"], ["Short Box Series: Round", "3–5", "2"], ["Short Box Series: Flat", "3–5", "2"], ["Short Box Series: Side to Side", "3 each side alternating", "2"], ["Short Box Series: Twist Only", "3 each side alternating", "2"], ["Short Box Series: Tree – Front Stretch", "3 kicks, hold stretch", "2"], ["Long Stretch Series: Elephant", "5–10", "2"], ["Knee Stretch Series: Round", "5–10", "2"], ["Knee Stretch Series: Arched or Flat", "5–10", "2"], ["Running", "10", "3–4"], ["Pelvic Lift", "10", "3–4"]]};
+const FUND={"funds": {"Breathing": {"reps": "3–5 breaths", "page": 3, "goal": "胸廓三維呼吸；協助軀幹與墊面／Reformer 建立連結。"}, "Clock Work": {"reps": "3–5", "page": 4, "goal": "骨盆穩定及脊柱逐節屈曲。"}, "Rib Cage Arms": {"reps": "3–5", "page": 5, "goal": "肩胛穩定、手臂獨立於胸廓移動。"}, "Head Nods": {"reps": "3–5", "page": 5, "goal": "從頭頸開始帶動脊柱屈曲／伸展。"}, "Neck Curls": {"reps": "3–5", "page": 6, "goal": "頭頸與 Powerhouse 的連結；仰臥抬頭時保持排列。"}, "Knee Folds": {"reps": "3–5 each leg", "page": 6, "goal": "腿部移動時維持骨盆和軀幹穩定。"}, "Seated Tracking": {"reps": "3–5 each leg", "page": 7, "goal": "腿部從髖到足部的對線與動作模式。"}, "Knee Spreads": {"reps": "3–5", "page": 8, "goal": "髖外展／內收時穩定軀幹。"}}, "mapping": {"Hundred": ["Breathing", "Clock Work", "Head Nods", "Neck Curls", "Knee Folds"], "The Roll Up": ["Clock Work", "Rib Cage Arms"], "One Leg Circle": ["Knee Spreads"], "Rolling Like a Ball": ["Clock Work"], "Single Leg Stretch": ["Neck Curls"], "Double Leg Stretch": ["Seated Tracking"], "Side Kick Series: Front & Back": ["Clock Work", "Knee Folds"], "Side Kick Series: Up & Down": ["Clock Work", "Knee Folds"], "Side Kick Series: Inner Thigh Lifts & Circles": ["Clock Work", "Knee Folds"], "Teaser – One Leg": ["Breathing", "Rib Cage Arms"], "Footwork Series: Toes, Arches, Heels, Tendon Stretch": ["Breathing", "Clock Work", "Knee Folds", "Seated Tracking"], "Frog": ["Seated Tracking", "Knee Spreads"], "Leg Circles": ["Seated Tracking", "Knee Spreads"], "Long Stretch Series: Elephant": ["Rib Cage Arms"]}};
+let apparatus='mat',mode='recall',idx=0,correct=0,answered=0,wrong=[],checked=false,dragOrder=[],hideFund=false;
+const $=id=>document.getElementById(id);
+const items=()=>DATA[apparatus];
+const escapeHTML=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const compact=s=>String(s||'').toLowerCase().replace(/[–—−]/g,'-').replace(/\s+/g,' ').trim();
+const normName=s=>compact(s).replace(/&/g,'and').replace(/[^a-z0-9]/g,'');
+function eqName(got,want){return normName(got)===normName(want)||normName(got)===normName(want.replace(/^The /i,''));}
+// 把教材的文字次數拆成數字欄位與固定單位，不用輸入「次、each direction、breaths」。
+function repSpec(raw,name=''){
+ let text=String(raw),range=text.match(/^(\d+)[–—-](\d+)/),single=text.match(/^(\d+)/),numbers=range?[Number(range[1]),Number(range[2])]:single?[Number(single[1])]:[];
+ let unit='次',note='';
+ if(/breath/i.test(text)){unit='次完整呼吸（Full Breaths）';note='Hundred：合計 100 pumps';}
+ else if(/kicks/i.test(text)){unit='次 kicks（踢腿）';note='完成後 hold stretch（保持伸展）';}
+ else if(/each direction/i.test(text)){unit='次／每個方向（each direction）';}
+ else if(/each side alternating/i.test(text)){unit='次／每側交替（each side alternating）';}
+ else if(/each/i.test(text)){unit=/Footwork/i.test(name)?'次／每個 Footwork 位置（each position）':/Inner Thigh/i.test(name)?'次／每個動作（Lifts / Circles）':'次／每一項（each）';}
+ if(/omit first lesson/i.test(text))note='第一次上課可省略（Omit first lesson）';
+ return {numbers,unit,note,isRange:numbers.length===2};
+}
+function springSpec(raw){let nums=String(raw).match(/\d+/g).map(Number);return {numbers:nums,unit:'條彈簧（springs）',isRange:nums.length===2};}
+function numberFields(prefix,spec){
+ let part=spec.numbers.map((v,j)=>`<div><label for="${prefix}-${j}">${spec.isRange?(j===0?'最低次數':'最高次數'):'填入次數'}</label><div class="number-box"><input id="${prefix}-${j}" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" autocomplete="off" placeholder="數字"></div></div>`).join('');
+ // 針對彈簧調整欄位名稱（仍然只填數字）。
+ if(spec.unit.includes('springs'))part=part.replace(/最低次數/g,'最少彈簧').replace(/最高次數/g,'最多彈簧').replace(/填入次數/g,'彈簧數');
+ return `<div class="${spec.isRange?'number-pair':''}">${part}</div><div class="unit-line">單位：${escapeHTML(spec.unit)}</div>${spec.note?`<div class="number-hint">${escapeHTML(spec.note)}</div>`:''}`;
+}
+function eqNumbers(prefix,spec){return spec.numbers.every((v,j)=>{let el=$(prefix+'-'+j);return el&&el.value.trim()!==''&&/^\d+$/.test(el.value.trim())&&Number(el.value)===v;});}
+function prettyReps(raw,name=""){let s=repSpec(raw,name);return s.numbers.join('–')+' '+s.unit+(s.note?'；'+s.note:'');}
+function prettySpring(raw){return springSpec(raw).numbers.join('–')+' 條彈簧';}
+function eqSpring(got,want){return compact(got).replace(/[^0-9-]/g,'')===compact(want).replace(/[^0-9-]/g,'');}
+function update(){let n=items().length;$('score').textContent=correct+' / '+answered;$('wrong').textContent=wrong.length;$('progress-text').textContent=idx>=n?'完成':(idx+1)+' / '+n;$('progress-fill').style.width=Math.floor(idx/n*100)+'%';}
+function reset(){idx=0;correct=0;answered=0;wrong=[];checked=false;dragOrder=items().map((_,i)=>i);render();update();}
+function setApp(a){apparatus=a;$('tab-mat').classList.toggle('selected',a==='mat');$('tab-reformer').classList.toggle('selected',a==='reformer');reset();populateFund();}
+function setMode(m){mode=m;['recall','write','drag'].forEach(x=>$('mode-'+x).classList.toggle('selected',x===m));reset();}
+function render(){if(mode==='recall')renderRecall();if(mode==='write')renderWrite();if(mode==='drag')renderDrag();}
+function renderRecall(){
+ if(idx>=items().length){finish();return;}
+ let prev=idx?items()[idx-1][0]:'START',x=items()[idx];
+ $('practice').innerHTML=`<div class="card"><div class="small">上一個動作／起點</div><div class="prompt">${escapeHTML(prev)}</div><label for="next-name">下一個動作名稱</label><input id="next-name" autocomplete="off" placeholder="直接輸入英文名稱"><div style="font-weight:700;margin-top:8px">Repetitions / 次數</div>${numberFields('next-rep',repSpec(x[1],x[0]))}${apparatus==='reformer'?`<div style="font-weight:700;margin-top:8px">Springs / 彈簧數</div>${numberFields('next-spring',springSpec(x[2]))}`:''}<button id="submit-one" class="primary" type="button">核對答案</button><div id="one-feedback"></div></div>`;
+ $('submit-one').onclick=gradeRecall;
+}
+function gradeRecall(){
+ if(checked)return;let x=items()[idx],nameOk=eqName($('next-name').value,x[0]),repsOk=eqNumbers('next-rep',repSpec(x[1],x[0])),sprOk=apparatus!=='reformer'||eqNumbers('next-spring',springSpec(x[2]));
+ checked=true;answered++;if(nameOk&&repsOk&&sprOk)correct++;else wrong.push(idx);
+ let msg=`<b>${nameOk&&repsOk&&sprOk?'✓ 全部正確':'✗ 答案核對'}</b><div>動作：${escapeHTML(x[0])} ${nameOk?'✓':'✗'}</div><div>Reps：${escapeHTML(prettyReps(x[1],x[0]))} ${repsOk?'✓':'✗'}</div>${apparatus==='reformer'?`<div>Springs：${escapeHTML(prettySpring(x[2]))} ${sprOk?'✓':'✗'}</div>`:''}<div class="actions"><button id="continue" class="secondary" type="button">下一題 →</button></div>`;
+ $('one-feedback').className='feedback '+(nameOk&&repsOk&&sprOk?'good':'bad');$('one-feedback').innerHTML=msg;$('submit-one').disabled=true;
+ $('continue').onclick=()=>{idx++;checked=false;render();update();};update();
+}
+function finish(){$('practice').innerHTML=`<div class="card"><h2>練習完成</h2><div class="prompt">${correct} / ${answered}</div><p>${wrong.length?'錯誤位置：'+wrong.map(j=>'#'+(j+1)).join('、'):'全部正確！'}</p><button class="primary" id="again" type="button">重新練習</button></div>`;$('again').onclick=reset;update();}
+function renderWrite(){
+ let rows=items().map((x,j)=>`<div class="row" id="row-${j}"><div class="small">#${j+1}</div><label for="wn-${j}">動作</label><input id="wn-${j}" autocomplete="off"><div style="font-weight:700">Repetitions / 次數</div>${numberFields('wr-'+j,repSpec(x[1],x[0]))}${apparatus==='reformer'?`<div style="font-weight:700">Springs / 彈簧數</div>${numberFields('ws-'+j,springSpec(x[2]))}`:''}<div class="small" id="result-${j}"></div></div>`).join('');
+ $('practice').innerHTML=`<div class="card"><h2>完全無選項默寫</h2><p>從第一個動作開始，依照順序寫出完整 repertoire。每個數字欄位只需填數字；系統會顯示固定計數單位，最後一起核對。</p>${rows}<div class="actions"><button id="grade-all" type="button" class="primary">批改全部</button><button id="clear-all" type="button">清空重練</button></div></div>`;
+ $('grade-all').onclick=gradeWrite;$('clear-all').onclick=reset;
+}
+function gradeWrite(){
+ if(checked)return;checked=true;answered=items().length;wrong=[];correct=0;
+ items().forEach((x,j)=>{
+  let yes=eqName($('wn-'+j).value,x[0])&&eqNumbers('wr-'+j,repSpec(x[1],x[0]))&&(apparatus!=='reformer'||eqNumbers('ws-'+j,springSpec(x[2])));
+  $('row-'+j).classList.add(yes?'good':'bad');
+  $('result-'+j).textContent=(yes?'✓ 正確':'✗ '+x[0]+' | '+prettyReps(x[1],x[0])+(apparatus==='reformer'?' | '+prettySpring(x[2]):''));
+  if(yes)correct++;else wrong.push(j);
+ });idx=items().length;$('grade-all').disabled=true;update();
+}
+function shuffle(){for(let j=dragOrder.length-1;j>0;j--){let k=Math.floor(Math.random()*(j+1));[dragOrder[j],dragOrder[k]]=[dragOrder[k],dragOrder[j]];}}
+function renderDrag(){shuffle();drawDrag();}
+function drawDrag(){let rows=dragOrder.map((v,j)=>`<div class="row" draggable="true" data-index="${v}"><div class="row-head"><div><span class="small">${j+1}.　</span><span class="move">${escapeHTML(items()[v][0])}</span><div class="small">${escapeHTML(prettyReps(items()[v][1],items()[v][0]))}${apparatus==='reformer'?'　·　'+escapeHTML(prettySpring(items()[v][2])):''}</div></div><div class="drag-control"><button type="button" class="smallbtn" data-dir="-1" data-at="${j}" aria-label="上移">↑</button><button type="button" class="smallbtn" data-dir="1" data-at="${j}" aria-label="下移">↓</button></div></div></div>`).join('');$('practice').innerHTML=`<div class="card"><h2>順序整理（有選項）</h2><p>手機可以按 ↑ ↓ 排序；電腦也可拖曳。</p><div id="drag-list">${rows}</div><div class="actions"><button id="check-drag" class="primary" type="button">檢查順序</button><button id="re-shuffle" type="button">重新打亂</button></div><div id="drag-feedback"></div></div>`;
+$('practice').querySelectorAll('[data-dir]').forEach(b=>b.onclick=()=>{let at=+b.dataset.at,other=at+(+b.dataset.dir);if(other>=0&&other<dragOrder.length){[dragOrder[at],dragOrder[other]]=[dragOrder[other],dragOrder[at]];drawDrag();}});
+let moving=null;const holder=$('drag-list');holder.querySelectorAll('.row').forEach(el=>{el.ondragstart=()=>{moving=el;};el.ondragover=e=>{e.preventDefault();if(!moving||moving===el)return;let r=el.getBoundingClientRect();holder.insertBefore(moving,e.clientY<r.top+r.height/2?el:el.nextSibling);};el.ondragend=()=>{dragOrder=[...holder.children].map(x=>+x.dataset.index);drawDrag();};});
+$('check-drag').onclick=()=>{dragOrder=[...holder.children].map(x=>+x.dataset.index);let k=dragOrder.filter((n,j)=>n===j).length;$('drag-feedback').className='feedback '+(k===dragOrder.length?'good':'bad');$('drag-feedback').textContent=`${k} / ${dragOrder.length} 個位置正確`;answered=dragOrder.length;correct=k;wrong=dragOrder.map((n,j)=>n===j?-1:j).filter(j=>j>=0);idx=items().length;update();};$('re-shuffle').onclick=reset;}
+function populateFund(){let sel=$('fund-select');sel.replaceChildren();items().forEach((x,j)=>{let opt=document.createElement('option');opt.value=j;opt.textContent=(j+1)+'. '+x[0];sel.add(opt);});hideFund=false;$('fund-toggle').textContent='隱藏答案，先回想';showFund();}
+function showFund(){let x=items()[Number($('fund-select').value)],mapped=FUND.mapping[x[0]]||[],box=$('fund-result');if(hideFund){box.textContent='請先自行說出對應的 Fundamentals、訓練目標與原因，再按顯示答案。';return;}if(!mapped.length){box.innerHTML='<strong>此動作在本份 Fundamentals 教材的 Uses 中，未直接列出具名對應。</strong><div class="small">不是代表它不適合使用 Fundamentals；只是沒有足夠的原文依據列為明確對應。</div>';return;}box.innerHTML=`<div><b>${escapeHTML(x[0])}</b></div>`+mapped.map(k=>`<div class="tag">${escapeHTML(k)} · p.${FUND.funds[k].page}</div><div><span class="small">${escapeHTML(FUND.funds[k].goal)}｜Fundamental 次數：${escapeHTML(FUND.funds[k].reps)}</span></div>`).join('');}
+$('tab-mat').onclick=()=>setApp('mat');$('tab-reformer').onclick=()=>setApp('reformer');$('mode-recall').onclick=()=>setMode('recall');$('mode-write').onclick=()=>setMode('write');$('mode-drag').onclick=()=>setMode('drag');$('fund-select').onchange=showFund;
+$('fund-random').onclick=()=>{$('fund-select').value=Math.floor(Math.random()*items().length);hideFund=true;$('fund-toggle').textContent='顯示答案';showFund();};$('fund-toggle').onclick=()=>{hideFund=!hideFund;$('fund-toggle').textContent=hideFund?'顯示答案':'隱藏答案，先回想';showFund();};
+reset();populateFund();
+</script></body></html>
